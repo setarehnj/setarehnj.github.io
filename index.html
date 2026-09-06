@@ -218,14 +218,13 @@ window.Quarto = {
 <p>I work on interpretability and alignment, with a focus on where reasoning happens inside a model and whether we can trust what it reports. This is where I keep my notes, papers and half-finished ideas.</p>
 </div>
 <div class="feature-grid-wrap">
-<div id="feature-grid" class="feature-grid" role="group" aria-label="Featured writing, shown as active features">
+  <div class="feature-grid" id="feature-grid" role="group" aria-label="Featured writing, shown as active features"></div>
+  <div class="feature-readout">
+    <span id="feature-label">Each active feature is a piece of writing. Hover one.</span>
+    <span id="feature-index">— / —</span>
+  </div>
+</div>
 
-</div>
-<div class="feature-readout">
-<pre><code>&lt;span id="feature-label"&gt;Each active feature is a piece of writing. Hover one.&lt;/span&gt;
-&lt;span id="feature-index"&gt;— / —&lt;/span&gt;</code></pre>
-</div>
-</div>
 <script>
 (function () {
   var grid = document.getElementById('feature-grid');
