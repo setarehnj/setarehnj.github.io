@@ -1,0 +1,107 @@
+[
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html",
+    "href": "writing/2026-08-11-sae-limits/index.html",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "",
+    "text": "A sparse autoencoder gives you a dictionary of directions in activation space and a claim that those directions are more interpretable than neurons. That claim is doing a lot of work, and this note is about where it stops holding."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#the-setup",
+    "href": "writing/2026-08-11-sae-limits/index.html#the-setup",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "The setup",
+    "text": "The setup\nGiven activations \\(x \\in \\mathbb{R}^d\\), an SAE learns an encoder and decoder such that\n\\[\n\\hat{x} = W_{\\text{dec}} f(x) + b, \\qquad f(x) = \\text{ReLU}(W_{\\text{enc}}(x - b)),\n\\]\ntrained to minimise reconstruction error under an \\(\\ell_1\\) penalty on \\(f(x)\\):\n\\[\n\\mathcal{L} = \\underbrace{\\lVert x - \\hat{x} \\rVert_2^2}_{\\text{reconstruction}} + \\lambda \\underbrace{\\lVert f(x) \\rVert_1}_{\\text{sparsity}}.\n\\]\nThe interpretability claim is that the columns of \\(W_{\\text{dec}}\\) correspond to human-legible features (Cunningham et al., 2023). The mechanistic claim — which is different, and stronger — is that those features are the units the model itself computes over (Olah et al., 2020)."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#where-the-two-claims-come-apart",
+    "href": "writing/2026-08-11-sae-limits/index.html#where-the-two-claims-come-apart",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "Where the two claims come apart",
+    "text": "Where the two claims come apart\n\n\n\n\n\n\nNoteThe short version\n\n\n\nA dictionary element can be legible to you and still not be a variable the model uses. Legibility is a property of the projection; causal relevance has to be tested separately.\n\n\nThree things to check before treating a feature as mechanistic:\n\nAblation actually changes behaviour. If zeroing the feature leaves the downstream logits untouched, you have found a correlate, not a cause.\nThe effect survives a better baseline. Mean ablation and zero ablation disagree, sometimes badly — I wrote about this separately.\nThe feature is stable across seeds. Dictionaries trained on the same activations with different seeds should recover overlapping features. Often they don’t."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#a-quick-illustration",
+    "href": "writing/2026-08-11-sae-limits/index.html#a-quick-illustration",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "A quick illustration",
+    "text": "A quick illustration\n\n\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nl0 = np.array([4, 8, 16, 32, 64, 128])\nmse = np.array([0.42, 0.27, 0.16, 0.11, 0.09, 0.085])\n\nfig, ax = plt.subplots(figsize=(5.5, 3.2))\nax.plot(l0, mse, marker=\"o\", color=\"#11707E\")\nax.set_xscale(\"log\", base=2)\nax.set_xlabel(\"mean $L_0$ (active features per token)\")\nax.set_ylabel(\"reconstruction MSE\")\nax.spines[[\"top\", \"right\"]].set_visible(False)\nplt.tight_layout()\n\n\nFigure 1\n\n\n\nSet eval: true in the chunk options above and Quarto will run this at render time and drop the resulting figure into the page. That is the main reason to use Quarto for a research blog: the figure in the post and the code that made it can’t drift apart."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#what-id-want-to-see-next",
+    "href": "writing/2026-08-11-sae-limits/index.html#what-id-want-to-see-next",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "What I’d want to see next",
+    "text": "What I’d want to see next\nAn SAE paper that reports, for its headline features, the ablation effect size alongside the interpretability score. Right now those two numbers rarely appear in the same table."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#references",
+    "href": "writing/2026-08-11-sae-limits/index.html#references",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "References",
+    "text": "References\n\n\nCunningham, H., Ewart, A., Riggs, L., Huben, R., & Sharkey, L. (2023). Sparse autoencoders find highly interpretable features in language models. arXiv Preprint arXiv:2309.08600.\n\n\nOlah, C., Cammarata, N., Schubert, L., Goh, G., Petrov, M., & Carter, S. (2020). Zoom in: An introduction to circuits. Distill. https://doi.org/10.23915/distill.00024.001"
+  },
+  {
+    "objectID": "writing.html",
+    "href": "writing.html",
+    "title": "Scientific writing",
+    "section": "",
+    "text": "What sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Reading what models actually compute.",
+    "section": "",
+    "text": "AI safety · Interpretability · Reasoning"
+  },
+  {
+    "objectID": "index.html#recent",
+    "href": "index.html#recent",
+    "title": "Reading what models actually compute.",
+    "section": "Recent",
+    "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "insights/2026-08-02-one-gpu-setup/index.html",
+    "href": "insights/2026-08-02-one-gpu-setup/index.html",
+    "title": "A one-GPU setup for interpretability experiments",
+    "section": "",
+    "text": "Most of what I run fits on a single GPU if the activations never all exist at once. The pattern below is what I keep coming back to."
+  },
+  {
+    "objectID": "insights/2026-08-02-one-gpu-setup/index.html#hook-once-write-straight-to-disk",
+    "href": "insights/2026-08-02-one-gpu-setup/index.html#hook-once-write-straight-to-disk",
+    "title": "A one-GPU setup for interpretability experiments",
+    "section": "Hook once, write straight to disk",
+    "text": "Hook once, write straight to disk\n\nfrom contextlib import contextmanager\nimport torch\n\n@contextmanager\ndef capture(module, store, key):\n    \"\"\"Append this module's output to `store[key]`, on CPU, then detach.\"\"\"\n    def hook(_m, _inp, out):\n        store.setdefault(key, []).append(out.detach().to(\"cpu\", torch.float16))\n    handle = module.register_forward_hook(hook)\n    try:\n        yield store\n    finally:\n        handle.remove()\n\nTwo details do most of the work: float16 on the way out halves the disk cost with no visible effect on anything I’ve measured, and .to(\"cpu\") inside the hook keeps the GPU from accumulating a batch’s worth of residual stream."
+  },
+  {
+    "objectID": "insights/2026-08-02-one-gpu-setup/index.html#three-habits-worth-the-friction",
+    "href": "insights/2026-08-02-one-gpu-setup/index.html#three-habits-worth-the-friction",
+    "title": "A one-GPU setup for interpretability experiments",
+    "section": "Three habits worth the friction",
+    "text": "Three habits worth the friction\n\nOne run, one directory, one config file. If you can’t reconstruct which checkpoint produced a figure, the figure isn’t evidence.\nSave the tokenizer output, not just the text. Re-tokenizing later with a slightly different version is a silent source of mismatch.\nWrite the negative results down the same day. They are the ones you will otherwise re-run in four months."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Who I am · What I work on\nI’m a computer science PhD student at UC Santa Barbara. My research interests sit at the intersection of AI safety and reasoning: interpretability methods that scale, alignment techniques that survive contact with capable models, and the question of whether a model’s stated reasoning has anything to do with its real computation.\nBefore this I worked on generative models, machine unlearning for LLMs, physics-informed neural networks and reinforcement learning. Those threads still show up here — unlearning in particular turns out to be an interpretability problem wearing a different hat.\nI’m currently looking for research internships and preparing PhD applications in AI safety. If you’re working on something adjacent, I’d like to hear about it."
+  },
+  {
+    "objectID": "about.html#elsewhere",
+    "href": "about.html#elsewhere",
+    "title": "About",
+    "section": "Elsewhere",
+    "text": "Elsewhere\n\n\n\nEmail\nyou@example.com\n\n\nGoogle Scholar\nprofile\n\n\nGitHub\nyourhandle\n\n\nLinkedIn\nyourhandle\n\n\nX\n(yourhandle?)\n\n\nCV\nPDF"
+  },
+  {
+    "objectID": "insights.html",
+    "href": "insights.html",
+    "title": "Tech insights",
+    "section": "",
+    "text": "A one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n2026-08-02\n\n\n\n\n\n\nNo matching items"
+  }
+]

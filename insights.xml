@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Setareh</title>
+<link>https://setarehnj.github.io/insights.html</link>
+<atom:link href="https://setarehnj.github.io/insights.xml" rel="self" type="application/rss+xml"/>
+<description>Research notes on AI safety, interpretability and reasoning.</description>
+<generator>quarto-1.10.18</generator>
+<lastBuildDate>Sat, 01 Aug 2026 20:30:00 GMT</lastBuildDate>
+<item>
+  <title>A one-GPU setup for interpretability experiments</title>
+  <link>https://setarehnj.github.io/insights/2026-08-02-one-gpu-setup/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Most of what I run fits on a single GPU if the activations never all exist at once. The pattern below is what I keep coming back to.</p>
+<section id="hook-once-write-straight-to-disk" class="level2">
+<h2 class="anchored" data-anchor-id="hook-once-write-straight-to-disk">Hook once, write straight to disk</h2>
+<div id="2f100a95" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> contextlib <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> contextmanager</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@contextmanager</span></span>
+<span id="cb1-5"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> capture(module, store, key):</span>
+<span id="cb1-6">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Append this module's output to `store[key]`, on CPU, then detach."""</span></span>
+<span id="cb1-7">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> hook(_m, _inp, out):</span>
+<span id="cb1-8">        store.setdefault(key, []).append(out.detach().to(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"cpu"</span>, torch.float16))</span>
+<span id="cb1-9">    handle <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> module.register_forward_hook(hook)</span>
+<span id="cb1-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">try</span>:</span>
+<span id="cb1-11">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">yield</span> store</span>
+<span id="cb1-12">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">finally</span>:</span>
+<span id="cb1-13">        handle.remove()</span></code></pre></div></div>
+</div>
+<p>Two details do most of the work: <code>float16</code> on the way out halves the disk cost with no visible effect on anything I’ve measured, and <code>.to("cpu")</code> inside the hook keeps the GPU from accumulating a batch’s worth of residual stream.</p>
+</section>
+<section id="three-habits-worth-the-friction" class="level2">
+<h2 class="anchored" data-anchor-id="three-habits-worth-the-friction">Three habits worth the friction</h2>
+<ul>
+<li><strong>One run, one directory, one config file.</strong> If you can’t reconstruct which checkpoint produced a figure, the figure isn’t evidence.</li>
+<li><strong>Save the tokenizer output, not just the text.</strong> Re-tokenizing later with a slightly different version is a silent source of mismatch.</li>
+<li><strong>Write the negative results down the same day.</strong> They are the ones you will otherwise re-run in four months.</li>
+</ul>
+
+
+</section>
+
+ ]]></description>
+  <category>tooling</category>
+  <category>workflow</category>
+  <guid>https://setarehnj.github.io/insights/2026-08-02-one-gpu-setup/</guid>
+  <pubDate>Sat, 01 Aug 2026 20:30:00 GMT</pubDate>
+</item>
+</channel>
+</rss>
