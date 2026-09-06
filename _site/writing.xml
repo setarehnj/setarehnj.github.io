@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Setareh</title>
+<link>https://setareh.example.com/writing.html</link>
+<atom:link href="https://setareh.example.com/writing.xml" rel="self" type="application/rss+xml"/>
+<description>Research notes on AI safety, interpretability and reasoning.</description>
+<generator>quarto-1.10.18</generator>
+<lastBuildDate>Mon, 10 Aug 2026 20:30:00 GMT</lastBuildDate>
+<item>
+  <title>What sparse autoencoders don’t tell you about a circuit</title>
+  <link>https://setareh.example.com/writing/2026-08-11-sae-limits/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>A sparse autoencoder gives you a dictionary of directions in activation space and a claim that those directions are more interpretable than neurons. That claim is doing a lot of work, and this note is about where it stops holding.</p>
+<section id="the-setup" class="level2">
+<h2 class="anchored" data-anchor-id="the-setup">The setup</h2>
+<p>Given activations <img src="https://latex.codecogs.com/png.latex?x%20%5Cin%20%5Cmathbb%7BR%7D%5Ed">, an SAE learns an encoder and decoder such that</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7Bx%7D%20=%20W_%7B%5Ctext%7Bdec%7D%7D%20f(x)%20+%20b,%20%5Cqquad%20f(x)%20=%20%5Ctext%7BReLU%7D(W_%7B%5Ctext%7Benc%7D%7D(x%20-%20b)),%0A"></p>
+<p>trained to minimise reconstruction error under an <img src="https://latex.codecogs.com/png.latex?%5Cell_1"> penalty on <img src="https://latex.codecogs.com/png.latex?f(x)">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathcal%7BL%7D%20=%20%5Cunderbrace%7B%5ClVert%20x%20-%20%5Chat%7Bx%7D%20%5CrVert_2%5E2%7D_%7B%5Ctext%7Breconstruction%7D%7D%20+%20%5Clambda%20%5Cunderbrace%7B%5ClVert%20f(x)%20%5CrVert_1%7D_%7B%5Ctext%7Bsparsity%7D%7D.%0A"></p>
+<p>The interpretability claim is that the columns of <img src="https://latex.codecogs.com/png.latex?W_%7B%5Ctext%7Bdec%7D%7D"> correspond to human-legible features <span class="citation" data-cites="cunningham2023sparse">(Cunningham et al., 2023)</span>. The mechanistic claim — which is different, and stronger — is that those features are the units the model itself computes over <span class="citation" data-cites="olah2020zoom">(Olah et al., 2020)</span>.</p>
+</section>
+<section id="where-the-two-claims-come-apart" class="level2">
+<h2 class="anchored" data-anchor-id="where-the-two-claims-come-apart">Where the two claims come apart</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The short version
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A dictionary element can be legible to you and still not be a variable the model uses. Legibility is a property of the projection; causal relevance has to be tested separately.</p>
+</div>
+</div>
+<p>Three things to check before treating a feature as mechanistic:</p>
+<ol type="1">
+<li><strong>Ablation actually changes behaviour.</strong> If zeroing the feature leaves the downstream logits untouched, you have found a correlate, not a cause.</li>
+<li><strong>The effect survives a better baseline.</strong> Mean ablation and zero ablation disagree, sometimes badly — I wrote about this <a href="../../insights/2026-08-02-one-gpu-setup/">separately</a>.</li>
+<li><strong>The feature is stable across seeds.</strong> Dictionaries trained on the same activations with different seeds should recover overlapping features. Often they don’t.</li>
+</ol>
+</section>
+<section id="a-quick-illustration" class="level2">
+<h2 class="anchored" data-anchor-id="a-quick-illustration">A quick illustration</h2>
+<div id="fig-sparsity" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sparsity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-3"></span>
+<span id="cb1-4">l0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">32</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">64</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">128</span>])</span>
+<span id="cb1-5">mse <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.42</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.27</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.16</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.11</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.09</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.085</span>])</span>
+<span id="cb1-6"></span>
+<span id="cb1-7">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3.2</span>))</span>
+<span id="cb1-8">ax.plot(l0, mse, marker<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"o"</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#11707E"</span>)</span>
+<span id="cb1-9">ax.set_xscale(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"log"</span>, base<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb1-10">ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"mean $L_0$ (active features per token)"</span>)</span>
+<span id="cb1-11">ax.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"reconstruction MSE"</span>)</span>
+<span id="cb1-12">ax.spines[[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"top"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"right"</span>]].set_visible(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb1-13">plt.tight_layout()</span></code></pre></div></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-sparsity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div>
+<p>Set <code>eval: true</code> in the chunk options above and Quarto will run this at render time and drop the resulting figure into the page. That is the main reason to use Quarto for a research blog: the figure in the post and the code that made it can’t drift apart.</p>
+</section>
+<section id="what-id-want-to-see-next" class="level2">
+<h2 class="anchored" data-anchor-id="what-id-want-to-see-next">What I’d want to see next</h2>
+<p>An SAE paper that reports, for its headline features, the ablation effect size alongside the interpretability score. Right now those two numbers rarely appear in the same table.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2">
+<div id="ref-cunningham2023sparse" class="csl-entry">
+Cunningham, H., Ewart, A., Riggs, L., Huben, R., &amp; Sharkey, L. (2023). Sparse autoencoders find highly interpretable features in language models. <em>arXiv Preprint arXiv:2309.08600</em>.
+</div>
+<div id="ref-olah2020zoom" class="csl-entry">
+Olah, C., Cammarata, N., Schubert, L., Goh, G., Petrov, M., &amp; Carter, S. (2020). Zoom in: An introduction to circuits. <em>Distill</em>. <a href="https://doi.org/10.23915/distill.00024.001">https://doi.org/10.23915/distill.00024.001</a>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>interpretability</category>
+  <category>paper note</category>
+  <category>sparse autoencoders</category>
+  <guid>https://setareh.example.com/writing/2026-08-11-sae-limits/</guid>
+  <pubDate>Mon, 10 Aug 2026 20:30:00 GMT</pubDate>
+  <media:content url="https://setareh.example.com/writing/2026-08-11-sae-limits/figure-1.png" medium="image" type="image/png"/>
+</item>
+</channel>
+</rss>

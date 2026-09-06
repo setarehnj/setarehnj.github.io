@@ -1,0 +1,34 @@
+---
+title: ""
+page-layout: full
+toc: false
+listing:
+  - id: recent
+    contents:
+      - "writing/*/index.qmd"
+      - "insights/*/index.qmd"
+    type: default
+    sort: "date desc"
+    max-items: 4
+    fields: [date, title, description, categories, reading-time]
+    date-format: "YYYY-MM-DD"
+---
+
+::: {.eyebrow}
+AI safety · Interpretability · Reasoning
+:::
+
+# Reading what models [actually]{.accent} compute.
+
+::: {.lede}
+I work on interpretability and alignment, with a focus on where reasoning
+happens inside a model and whether we can trust what it reports. This is where
+I keep my notes, papers and half-finished ideas.
+:::
+
+{{< include includes/feature-grid.html >}}
+
+## Recent
+
+::: {#recent}
+:::

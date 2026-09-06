@@ -1,0 +1,57 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Setareh"
+  description: "Research notes on AI safety, interpretability and reasoning."
+  # Change this once you know where the site will live.
+  site-url: "https://setareh.example.com"
+  favicon: ""
+  navbar:
+    pinned: true
+    left:
+      - text: "About"
+        href: about.qmd
+      - text: "Scientific writing"
+        href: writing.qmd
+      - text: "Tech insights"
+        href: insights.qmd
+    right:
+      - icon: github
+        href: "https://github.com/yourhandle"
+        aria-label: GitHub
+      - icon: mortarboard-fill
+        href: "https://scholar.google.com/citations?user=YOURID"
+        aria-label: Google Scholar
+      - icon: linkedin
+        href: "https://linkedin.com/in/yourhandle"
+        aria-label: LinkedIn
+      - icon: envelope
+        href: "mailto:you@example.com"
+        aria-label: Email
+  page-footer:
+    left: "© 2026 Setareh"
+    right: "Built with Quarto · Set in Bricolage Grotesque & Source Serif 4"
+  open-graph: true
+  twitter-card: true
+
+format:
+  html:
+    theme: [default, styles.scss]
+    toc: true
+    toc-title: "On this page"
+    toc-depth: 3
+    anchor-sections: true
+    code-copy: true
+    code-overflow: wrap
+    highlight-style: github
+    fig-cap-location: bottom
+    link-external-newwindow: true
+    citations-hover: true
+
+bibliography: references.bib
+csl: https://www.zotero.org/styles/apa
+
+execute:
+  freeze: auto   # posts render once, then get cached — keeps builds fast

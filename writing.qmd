@@ -1,0 +1,13 @@
+---
+title: "Scientific writing"
+subtitle: "Paper notes, reviews, preprints and experiment write-ups."
+toc: false
+listing:
+  contents: "writing/*/index.qmd"
+  type: default
+  sort: "date desc"
+  categories: true
+  feed: true
+  fields: [date, title, description, categories, reading-time]
+  date-format: "YYYY-MM-DD"
+---

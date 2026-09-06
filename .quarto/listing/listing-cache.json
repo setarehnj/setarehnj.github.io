@@ -1,0 +1,14 @@
+{
+  "listingMap": {
+    "index.qmd": [
+      "writing/*/index.qmd",
+      "insights/*/index.qmd"
+    ],
+    "writing.qmd": [
+      "writing/*/index.qmd"
+    ],
+    "insights.qmd": [
+      "insights/*/index.qmd"
+    ]
+  }
+}

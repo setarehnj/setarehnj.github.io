@@ -1,0 +1,12 @@
+{
+  "hash": "254d810cf09b7df48aa8a2ff137308e3",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"A one-GPU setup for interpretability experiments\"\ndescription: \"Caching activations without filling the disk, and the hook pattern I reuse everywhere.\"\ndate: 2026-08-02\ncategories: [tooling, workflow]\n---\n\nMost of what I run fits on a single GPU if the activations never all exist at\nonce. The pattern below is what I keep coming back to.\n\n## Hook once, write straight to disk\n\n::: {#2f100a95 .cell execution_count=1}\n``` {.python .cell-code}\nfrom contextlib import contextmanager\nimport torch\n\n@contextmanager\ndef capture(module, store, key):\n    \"\"\"Append this module's output to `store[key]`, on CPU, then detach.\"\"\"\n    def hook(_m, _inp, out):\n        store.setdefault(key, []).append(out.detach().to(\"cpu\", torch.float16))\n    handle = module.register_forward_hook(hook)\n    try:\n        yield store\n    finally:\n        handle.remove()\n```\n:::\n\n\nTwo details do most of the work: `float16` on the way out halves the disk cost\nwith no visible effect on anything I've measured, and `.to(\"cpu\")` inside the\nhook keeps the GPU from accumulating a batch's worth of residual stream.\n\n## Three habits worth the friction\n\n- **One run, one directory, one config file.** If you can't reconstruct which\n  checkpoint produced a figure, the figure isn't evidence.\n- **Save the tokenizer output, not just the text.** Re-tokenizing later with a\n  slightly different version is a silent source of mismatch.\n- **Write the negative results down the same day.** They are the ones you will\n  otherwise re-run in four months.\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

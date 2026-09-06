@@ -1,0 +1,41 @@
+---
+title: "A one-GPU setup for interpretability experiments"
+description: "Caching activations without filling the disk, and the hook pattern I reuse everywhere."
+date: 2026-08-02
+categories: [tooling, workflow]
+---
+
+Most of what I run fits on a single GPU if the activations never all exist at
+once. The pattern below is what I keep coming back to.
+
+## Hook once, write straight to disk
+
+```{python}
+#| eval: false
+from contextlib import contextmanager
+import torch
+
+@contextmanager
+def capture(module, store, key):
+    """Append this module's output to `store[key]`, on CPU, then detach."""
+    def hook(_m, _inp, out):
+        store.setdefault(key, []).append(out.detach().to("cpu", torch.float16))
+    handle = module.register_forward_hook(hook)
+    try:
+        yield store
+    finally:
+        handle.remove()
+```
+
+Two details do most of the work: `float16` on the way out halves the disk cost
+with no visible effect on anything I've measured, and `.to("cpu")` inside the
+hook keeps the GPU from accumulating a batch's worth of residual stream.
+
+## Three habits worth the friction
+
+- **One run, one directory, one config file.** If you can't reconstruct which
+  checkpoint produced a figure, the figure isn't evidence.
+- **Save the tokenizer output, not just the text.** Re-tokenizing later with a
+  slightly different version is a silent source of mismatch.
+- **Write the negative results down the same day.** They are the ones you will
+  otherwise re-run in four months.

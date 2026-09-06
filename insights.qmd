@@ -1,0 +1,14 @@
+---
+title: "Tech insights"
+subtitle: "Shorter and looser — tooling, method notes, things that surprised me."
+toc: false
+listing:
+  contents: "insights/*/index.qmd"
+  type: grid
+  grid-columns: 2
+  sort: "date desc"
+  categories: true
+  feed: true
+  fields: [date, title, description, categories]
+  date-format: "YYYY-MM-DD"
+---
