@@ -19,16 +19,16 @@ website:
         href: insights.qmd
     right:
       - icon: github
-        href: "https://github.com/yourhandle"
+        href: "https://github.com/setarehnj"
         aria-label: GitHub
       - icon: mortarboard-fill
         href: "https://scholar.google.com/citations?user=YOURID"
         aria-label: Google Scholar
       - icon: linkedin
-        href: "https://linkedin.com/in/yourhandle"
+        href: "https://www.linkedin.com/in/setareh-najafi-023870273/"
         aria-label: LinkedIn
       - icon: envelope
-        href: "mailto:you@example.com"
+        href: "mailto:setareh@ucsb.edu"
         aria-label: Email
   page-footer:
     left: "© 2026 Setareh"

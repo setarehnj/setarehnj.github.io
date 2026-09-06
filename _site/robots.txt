@@ -1,1 +1,1 @@
-Sitemap: https://setareh.example.com/sitemap.xml
+Sitemap: https://setarehnj.github.io/sitemap.xml

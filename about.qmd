@@ -22,13 +22,4 @@ I'm currently looking for research internships and preparing PhD applications
 in AI safety. If you're working on something adjacent, I'd like to hear about
 it.
 
-## Elsewhere
 
-| | |
-|---|---|
-| Email | [you@example.com](mailto:you@example.com) |
-| Google Scholar | [profile](https://scholar.google.com) |
-| GitHub | [yourhandle](https://github.com) |
-| LinkedIn | [yourhandle](https://linkedin.com) |
-| X | [@yourhandle](https://x.com) |
-| CV | [PDF](cv.pdf) |

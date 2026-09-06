@@ -88,7 +88,7 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "Who I am · What I work on\nI’m a computer science PhD student at UC Santa Barbara. My research interests sit at the intersection of AI safety and reasoning: interpretability methods that scale, alignment techniques that survive contact with capable models, and the question of whether a model’s stated reasoning has anything to do with its real computation.\nBefore this I worked on generative models, machine unlearning for LLMs, physics-informed neural networks and reinforcement learning. Those threads still show up here — unlearning in particular turns out to be an interpretability problem wearing a different hat.\nI’m currently looking for research internships and preparing PhD applications in AI safety. If you’re working on something adjacent, I’d like to hear about it."
+    "text": "Who I am · What I work on\n\nI’m a computer science PhD student at UC Santa Barbara. My research interests sit at the intersection of AI safety and reasoning: interpretability methods that scale, alignment techniques that survive contact with capable models, and the question of whether a model’s stated reasoning has anything to do with its real computation.\nBefore this I worked on generative models, machine unlearning for LLMs, physics-informed neural networks and reinforcement learning. Those threads still show up here — unlearning in particular turns out to be an interpretability problem wearing a different hat.\nI’m currently looking for research internships and preparing PhD applications in AI safety. If you’re working on something adjacent, I’d like to hear about it."
   },
   {
     "objectID": "about.html#elsewhere",
