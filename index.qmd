@@ -18,13 +18,17 @@ listing:
 AI safety · Interpretability · Reasoning
 :::
 
-# Reading what models [actually]{.accent} compute.
+# Setareh Najafi
 
 ::: {.lede}
-I work on interpretability and alignment, with a focus on where reasoning
-happens inside a model and whether we can trust what it reports. This is where
-I keep my notes, papers and half-finished ideas.
+I’m a Computer Science PhD student at UC Santa Barbara, with current research interests in AI safety, mechanistic interpretability, and language-model reasoning. My broader work has included machine unlearning for LLMs, formal methods, physics-informed neural networks, and reinforcement learning.
+
+I earned my M.S. in Computer Science from UCSB and my B.Sc. in Computer Science from the University of Tehran.
+
+Seeking research opportunities in AI safety and interpretability for early 2027.
 :::
+
+[GitHub](https://github.com/setarehnj) · [LinkedIn](https://www.linkedin.com/in/setareh-najafi-023870273/) · [Email](mailto:njf.setareh@gmail.com)
 
 {{< include includes/feature-grid.html >}}
 

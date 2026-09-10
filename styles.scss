@@ -1,6 +1,7 @@
 /*-- scss:defaults --*/
 
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap');
+//@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 // Palette — the two accents are the ends of a diverging colormap.
 $ink:      #131A22;
@@ -18,7 +19,8 @@ $link-hover-color: $pos;
 
 $font-family-sans-serif: "Source Serif 4", Georgia, serif;
 $font-family-monospace:  "JetBrains Mono", ui-monospace, monospace;
-$headings-font-family:   "Bricolage Grotesque", system-ui, sans-serif;
+//$headings-font-family:   "Bricolage Grotesque", system-ui, sans-serif;
+$headings-font-family: "Instrument Sans", system-ui, sans-serif;
 
 $font-size-root: 18px;
 $line-height-base: 1.65;
@@ -43,7 +45,7 @@ $toc-font-size: 0.75rem;
 body { -webkit-font-smoothing: antialiased; }
 
 h1, h2, h3, h4 { letter-spacing: -0.02em; font-weight: 600; }
-h1 { font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
+h1 { font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; }
 
 :focus-visible { outline: 2px solid $pos; outline-offset: 3px; }
 
@@ -217,4 +219,11 @@ div.sourceCode {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
   .feature-grid .cell.on:hover { transform: none; outline: 2px solid $pos; }
+}
+// wider intro paragraph on the home page
+main .lede,
+main p.lede {
+  max-width: 70ch;
+  font-size: 1.1rem;
+  line-height: 1.55;
 }

@@ -51,14 +51,14 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Reading what models actually compute.",
+    "title": "Setareh Najafi",
     "section": "",
     "text": "AI safety · Interpretability · Reasoning"
   },
   {
     "objectID": "index.html#recent",
     "href": "index.html#recent",
-    "title": "Reading what models actually compute.",
+    "title": "Setareh Najafi",
     "section": "Recent",
     "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
   },
@@ -89,13 +89,6 @@
     "title": "About",
     "section": "",
     "text": "Who I am · What I work on\n\nI’m a computer science PhD student at UC Santa Barbara. My research interests sit at the intersection of AI safety and reasoning: interpretability methods that scale, alignment techniques that survive contact with capable models, and the question of whether a model’s stated reasoning has anything to do with its real computation.\nBefore this I worked on generative models, machine unlearning for LLMs, physics-informed neural networks and reinforcement learning. Those threads still show up here — unlearning in particular turns out to be an interpretability problem wearing a different hat.\nI’m currently looking for research internships and preparing PhD applications in AI safety. If you’re working on something adjacent, I’d like to hear about it."
-  },
-  {
-    "objectID": "about.html#elsewhere",
-    "href": "about.html#elsewhere",
-    "title": "About",
-    "section": "Elsewhere",
-    "text": "Elsewhere\n\n\n\nEmail\nyou@example.com\n\n\nGoogle Scholar\nprofile\n\n\nGitHub\nyourhandle\n\n\nLinkedIn\nyourhandle\n\n\nX\n(yourhandle?)\n\n\nCV\nPDF"
   },
   {
     "objectID": "insights.html",

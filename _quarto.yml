@@ -3,7 +3,7 @@ project:
   output-dir: _site
 
 website:
-  title: "Setareh"
+  title: "Setareh Najafi"
   description: "Research notes on AI safety, interpretability and reasoning."
   # Change this once you know where the site will live.
   site-url: "https://setarehnj.github.io" 
