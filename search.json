@@ -51,14 +51,14 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Reading what models actually compute.",
+    "title": "Setareh Najafi",
     "section": "",
     "text": "AI safety · Interpretability · Reasoning"
   },
   {
     "objectID": "index.html#recent",
     "href": "index.html#recent",
-    "title": "Reading what models actually compute.",
+    "title": "Setareh Najafi",
     "section": "Recent",
     "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
   },

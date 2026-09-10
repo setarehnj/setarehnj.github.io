@@ -5,7 +5,7 @@
       xmlns:dc="http://purl.org/dc/elements/1.1/" 
       version="2.0">
 <channel>
-<title>Setareh</title>
+<title>Setareh Najafi</title>
 <link>https://setarehnj.github.io/insights.html</link>
 <atom:link href="https://setarehnj.github.io/insights.xml" rel="self" type="application/rss+xml"/>
 <description>Research notes on AI safety, interpretability and reasoning.</description>
