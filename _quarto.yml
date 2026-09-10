@@ -6,7 +6,7 @@ website:
   title: "Setareh Najafi"
   description: "Research notes on AI safety, interpretability and reasoning."
   # Change this once you know where the site will live.
-  site-url: "https://setarehnj.github.io" 
+  site-url: "https://setarehnajafi.github.io" 
   favicon: ""
   navbar:
     pinned: true
