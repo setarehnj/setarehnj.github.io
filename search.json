@@ -49,20 +49,6 @@
     "text": "What sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Setareh Najafi",
-    "section": "",
-    "text": "AI safety · Interpretability · Reasoning\n\n\n\n\nI’m a Computer Science PhD student at UC Santa Barbara, with current research interests in AI safety, mechanistic interpretability, and language-model reasoning. My broader work has included machine unlearning for LLMs, formal methods, physics-informed neural networks, and reinforcement learning.\nI earned my M.S. in Computer Science from UCSB and my B.Sc. in Computer Science from the University of Tehran.\nSeeking research opportunities in AI safety and interpretability for early 2027.\n\nGitHub · LinkedIn · Email"
-  },
-  {
-    "objectID": "index.html#recent",
-    "href": "index.html#recent",
-    "title": "Setareh Najafi",
-    "section": "Recent",
-    "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "insights/2026-08-02-one-gpu-setup/index.html",
     "href": "insights/2026-08-02-one-gpu-setup/index.html",
     "title": "A one-GPU setup for interpretability experiments",
@@ -84,11 +70,18 @@
     "text": "Three habits worth the friction\n\nOne run, one directory, one config file. If you can’t reconstruct which checkpoint produced a figure, the figure isn’t evidence.\nSave the tokenizer output, not just the text. Re-tokenizing later with a slightly different version is a silent source of mismatch.\nWrite the negative results down the same day. They are the ones you will otherwise re-run in four months."
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Setareh Najafi",
     "section": "",
-    "text": "Who I am · What I work on\n\nI’m a computer science PhD student at UC Santa Barbara. My research interests sit at the intersection of AI safety and reasoning: interpretability methods that scale, alignment techniques that survive contact with capable models, and the question of whether a model’s stated reasoning has anything to do with its real computation.\nBefore this I worked on generative models, machine unlearning for LLMs, physics-informed neural networks and reinforcement learning. Those threads still show up here — unlearning in particular turns out to be an interpretability problem wearing a different hat.\nI’m currently looking for research internships and preparing PhD applications in AI safety. If you’re working on something adjacent, I’d like to hear about it."
+    "text": "AI safety · Interpretability · Reasoning\n\n\n\n\nI’m a Computer Science PhD student at UC Santa Barbara, with current research interests in AI safety, mechanistic interpretability, and language-model reasoning. My broader work has included machine unlearning for LLMs, formal methods, physics-informed neural networks, and reinforcement learning.\nI earned my M.S. in Computer Science from UCSB and my B.Sc. in Computer Science from the University of Tehran.\nSeeking research opportunities in AI safety and interpretability for early 2027.\n\nGitHub · LinkedIn · Email"
+  },
+  {
+    "objectID": "index.html#recent",
+    "href": "index.html#recent",
+    "title": "Setareh Najafi",
+    "section": "Recent",
+    "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "insights.html",
