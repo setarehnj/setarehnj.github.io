@@ -6,14 +6,14 @@
       version="2.0">
 <channel>
 <title>Setareh Najafi</title>
-<link>https://setarehnj.github.io/insights.html</link>
-<atom:link href="https://setarehnj.github.io/insights.xml" rel="self" type="application/rss+xml"/>
+<link>https://setarehnajafi.github.io/insights.html</link>
+<atom:link href="https://setarehnajafi.github.io/insights.xml" rel="self" type="application/rss+xml"/>
 <description>Research notes on AI safety, interpretability and reasoning.</description>
 <generator>quarto-1.10.18</generator>
 <lastBuildDate>Sat, 01 Aug 2026 20:30:00 GMT</lastBuildDate>
 <item>
   <title>A one-GPU setup for interpretability experiments</title>
-  <link>https://setarehnj.github.io/insights/2026-08-02-one-gpu-setup/</link>
+  <link>https://setarehnajafi.github.io/insights/2026-08-02-one-gpu-setup/</link>
   <description><![CDATA[ 
 
 
@@ -82,7 +82,7 @@ font-style: inherit;">finally</span>:</span>
  ]]></description>
   <category>tooling</category>
   <category>workflow</category>
-  <guid>https://setarehnj.github.io/insights/2026-08-02-one-gpu-setup/</guid>
+  <guid>https://setarehnajafi.github.io/insights/2026-08-02-one-gpu-setup/</guid>
   <pubDate>Sat, 01 Aug 2026 20:30:00 GMT</pubDate>
 </item>
 </channel>

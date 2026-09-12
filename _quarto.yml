@@ -11,8 +11,8 @@ website:
   navbar:
     pinned: true
     left:
-      - text: "About"
-        href: about.qmd
+      # - text: "About"
+      #   href: about.qmd
       - text: "Scientific writing"
         href: writing.qmd
       - text: "Tech insights"
