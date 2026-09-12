@@ -5,14 +5,11 @@ project:
 website:
   title: "Setareh Najafi"
   description: "Research notes on AI safety, interpretability and reasoning."
-  # Change this once you know where the site will live.
-  site-url: "https://setarehnajafi.github.io" 
+  site-url: "https://setarehnj.github.io" 
   favicon: ""
   navbar:
     pinned: true
     left:
-      # - text: "About"
-      #   href: about.qmd
       - text: "Scientific writing"
         href: writing.qmd
       - text: "Tech insights"

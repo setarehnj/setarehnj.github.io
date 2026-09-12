@@ -375,10 +375,20 @@ main p.lede {
       justify-content: flex-start;
     }
   
-    .home-hero-image img.profile-photo {
-      width: 100%;
-      max-width: 390px;
-      height: auto;
-      aspect-ratio: 420 / 500;
-    }
-  }
+  //   .home-hero-image img.profile-photo {
+  //     width: 100%;
+  //     max-width: 320px;
+  //     height: auto;
+  //     aspect-ratio: 420 / 500;
+  //   }
+  // }
+  .home-hero-image img.profile-photo {
+    width: 100%;
+    max-width: 320px;
+    height: 350px;
+  
+    object-fit: cover;
+    object-position: center;
+  
+    border-radius: 18px;
+  }}
