@@ -227,3 +227,158 @@ main p.lede {
   font-size: 1.1rem;
   line-height: 1.55;
 }
+
+// .home-hero {
+//   display: grid;
+//   grid-template-columns: minmax(0, 1fr) 280px;
+//   gap: 4rem;
+//   align-items: center;
+//   max-width: 1180px;
+//   margin: 4rem auto 5rem;
+// }
+
+
+// .profile-photo {
+//   width: 260px;
+//   height: 260px;
+//   object-fit: cover;
+//   object-position: center;
+//   border-radius: 50%;
+//   display: block;
+// }
+
+@media (max-width: 768px) {
+  /* ---------- homepage hero ---------- */
+
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) 380px;
+  gap: 5rem;
+  align-items: center;
+
+  max-width: 1280px;
+  margin: 4.5rem auto 5rem;
+}
+
+.home-hero-text {
+  min-width: 0;
+  max-width: 820px;
+}
+
+.home-hero-image {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.home-hero-image p {
+  margin: 0;
+}
+
+.profile-photo {
+  display: block;
+
+  width: 380px;
+  height: 460px;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 18px;
+  border: none;
+  box-shadow: none;
+}
+
+
+/* ---------- homepage mobile ---------- */
+
+@media (max-width: 900px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+
+    margin: 3rem auto 4rem;
+  }
+
+  .home-hero-text {
+    max-width: none;
+  }
+
+  .home-hero-image {
+    justify-content: flex-start;
+  }
+
+  .profile-photo {
+    width: min(100%, 380px);
+    height: auto;
+    aspect-ratio: 380 / 460;
+  }
+}}
+
+/* =========================================================
+   HOMEPAGE HERO
+   ========================================================= */
+
+  .home-hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  column-gap: 5rem;
+  align-items: center;
+
+  width: 100%;
+  max-width: 1280px;
+  margin: 3rem auto 5rem;
+}
+
+.home-hero-text {
+  min-width: 0;
+}
+
+.home-hero-image {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Quarto wraps Markdown images in a paragraph */
+.home-hero-image p {
+  margin: 0;
+  width: 100%;
+}
+
+.home-hero-image img.profile-photo {
+  display: block;
+
+  width: 100%;
+  max-width: 420px;
+  height: 500px;
+  
+    object-fit: cover;
+    object-position: center;
+  
+    border-radius: 18px;
+    border: 0;
+    box-shadow: none;
+  }
+  
+  
+  /* Mobile/tablet only */
+  @media (max-width: 900px) {
+    .home-hero {
+      grid-template-columns: 1fr;
+      row-gap: 2.5rem;
+      margin-top: 2.5rem;
+    }
+  
+    .home-hero-image {
+      justify-content: flex-start;
+    }
+  
+    .home-hero-image img.profile-photo {
+      width: 100%;
+      max-width: 390px;
+      height: auto;
+      aspect-ratio: 420 / 500;
+    }
+  }

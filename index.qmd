@@ -2,6 +2,7 @@
 title: ""
 page-layout: full
 toc: false
+
 listing:
   - id: recent
     contents:
@@ -10,9 +11,18 @@ listing:
     type: default
     sort: "date desc"
     max-items: 4
-    fields: [date, title, description, categories, reading-time]
+    fields:
+      - date
+      - title
+      - description
+      - categories
+      - reading-time
     date-format: "YYYY-MM-DD"
 ---
+
+::::: {.home-hero}
+
+:::: {.home-hero-text}
 
 ::: {.eyebrow}
 AI safety · Interpretability · Reasoning
@@ -21,14 +31,26 @@ AI safety · Interpretability · Reasoning
 # Setareh Najafi
 
 ::: {.lede}
+
 I’m a Computer Science PhD student at UC Santa Barbara, with current research interests in AI safety, mechanistic interpretability, and language-model reasoning. My broader work has included machine unlearning for LLMs, formal methods, physics-informed neural networks, and reinforcement learning.
 
 I earned my M.S. in Computer Science from UCSB and my B.Sc. in Computer Science from the University of Tehran.
 
 Seeking research opportunities in AI safety and interpretability for early 2027.
+
 :::
 
 [GitHub](https://github.com/setarehnj) · [LinkedIn](https://www.linkedin.com/in/setareh-najafi-023870273/) · [Email](mailto:njf.setareh@gmail.com)
+
+::::
+
+:::: {.home-hero-image}
+
+![](images/setareh.jpg){.profile-photo alt="Setareh Najafi"}
+
+::::
+
+:::::
 
 {{< include includes/feature-grid.html >}}
 
