@@ -4,49 +4,56 @@
     "href": "writing/2026-08-11-sae-limits/index.html",
     "title": "What sparse autoencoders don’t tell you about a circuit",
     "section": "",
-    "text": "A sparse autoencoder gives you a dictionary of directions in activation space and a claim that those directions are more interpretable than neurons. That claim is doing a lot of work, and this note is about where it stops holding."
+    "text": "Sparse autoencoders (SAEs) are appealing because they decompose dense model activations into a sparse dictionary of learned features that are often easier to describe than individual neurons (Bricken et al., 2023; Cunningham et al., 2023).\nWhile reading the SAE literature, there is one distinction I want to keep explicit:\nThis note is me working through that distinction."
   },
   {
-    "objectID": "writing/2026-08-11-sae-limits/index.html#the-setup",
-    "href": "writing/2026-08-11-sae-limits/index.html#the-setup",
+    "objectID": "writing/2026-08-11-sae-limits/index.html#basic-setup",
+    "href": "writing/2026-08-11-sae-limits/index.html#basic-setup",
     "title": "What sparse autoencoders don’t tell you about a circuit",
-    "section": "The setup",
-    "text": "The setup\nGiven activations \\(x \\in \\mathbb{R}^d\\), an SAE learns an encoder and decoder such that\n\\[\n\\hat{x} = W_{\\text{dec}} f(x) + b, \\qquad f(x) = \\text{ReLU}(W_{\\text{enc}}(x - b)),\n\\]\ntrained to minimise reconstruction error under an \\(\\ell_1\\) penalty on \\(f(x)\\):\n\\[\n\\mathcal{L} = \\underbrace{\\lVert x - \\hat{x} \\rVert_2^2}_{\\text{reconstruction}} + \\lambda \\underbrace{\\lVert f(x) \\rVert_1}_{\\text{sparsity}}.\n\\]\nThe interpretability claim is that the columns of \\(W_{\\text{dec}}\\) correspond to human-legible features (Cunningham et al., 2023). The mechanistic claim — which is different, and stronger — is that those features are the units the model itself computes over (Olah et al., 2020)."
+    "section": "Basic setup",
+    "text": "Basic setup\nFor activations \\(x \\in \\mathbb{R}^d\\), a sparse autoencoder learns a sparse latent representation \\(f(x)\\) and uses it to reconstruct the original activation:\n\\[\n\\hat{x} = W_{\\mathrm{dec}} f(x) + b_{\\mathrm{dec}}.\n\\]\nA simple version of the encoder is\n\\[\nf(x) = \\operatorname{ReLU}\\!\\left( W_{\\mathrm{enc}}(x - b_{\\mathrm{dec}}) + b_{\\mathrm{enc}} \\right),\n\\]\ntrained with an objective of the form\n\\[\n\\mathcal{L} = \\lVert x - \\hat{x} \\rVert_2^2 + \\lambda \\lVert f(x) \\rVert_1 .\n\\]\nThe reconstruction term asks the dictionary to preserve the information in the original activation. The sparsity term encourages each input to be represented by relatively few dictionary elements.\nSAE variants change both the activation function and the sparsity penalty, so this is best read as the basic picture rather than a definition that covers every SAE."
   },
   {
-    "objectID": "writing/2026-08-11-sae-limits/index.html#where-the-two-claims-come-apart",
-    "href": "writing/2026-08-11-sae-limits/index.html#where-the-two-claims-come-apart",
+    "objectID": "writing/2026-08-11-sae-limits/index.html#interpretability-is-not-yet-mechanism",
+    "href": "writing/2026-08-11-sae-limits/index.html#interpretability-is-not-yet-mechanism",
     "title": "What sparse autoencoders don’t tell you about a circuit",
-    "section": "Where the two claims come apart",
-    "text": "Where the two claims come apart\n\n\n\n\n\n\nNoteThe short version\n\n\n\nA dictionary element can be legible to you and still not be a variable the model uses. Legibility is a property of the projection; causal relevance has to be tested separately.\n\n\nThree things to check before treating a feature as mechanistic:\n\nAblation actually changes behaviour. If zeroing the feature leaves the downstream logits untouched, you have found a correlate, not a cause.\nThe effect survives a better baseline. Mean ablation and zero ablation disagree, sometimes badly — I wrote about this separately.\nThe feature is stable across seeds. Dictionaries trained on the same activations with different seeds should recover overlapping features. Often they don’t."
+    "section": "Interpretability is not yet mechanism",
+    "text": "Interpretability is not yet mechanism\nSuppose an SAE feature fires on tokens that all look semantically related. That is evidence that the learned direction captures some regularity in the model’s representation. It does not yet tell me what role that direction plays in the computation.\nI see at least three separate questions:\n\nCan I describe the feature? Does its activation pattern correspond to something coherent enough that a human can give it a useful description?\nDoes manipulating it causally affect the model? If I intervene on the feature, do downstream activations or outputs change in the way the proposed interpretation predicts?\nIs this decomposition privileged in any meaningful sense? Would another SAE — a different random seed, dictionary size, or sparsity constraint — recover something recognizably equivalent?\n\nThe first question is primarily about interpretability. The second bears directly on causal relevance. The third asks something different: whether the learned decomposition is robust enough to treat its features as more than one convenient coordinate system.\nThere is also a further jump from a causally relevant feature to a circuit-level explanation. A circuit claim is not just that some feature matters, but that a set of components and their interactions account for a computation. SAE features may provide useful nodes for such an explanation, but learning the features does not by itself identify the causal graph connecting them (Marks et al., 2024)."
   },
   {
-    "objectID": "writing/2026-08-11-sae-limits/index.html#a-quick-illustration",
-    "href": "writing/2026-08-11-sae-limits/index.html#a-quick-illustration",
+    "objectID": "writing/2026-08-11-sae-limits/index.html#why-reconstruction-isnt-enough",
+    "href": "writing/2026-08-11-sae-limits/index.html#why-reconstruction-isnt-enough",
     "title": "What sparse autoencoders don’t tell you about a circuit",
-    "section": "A quick illustration",
-    "text": "A quick illustration\n\n\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nl0 = np.array([4, 8, 16, 32, 64, 128])\nmse = np.array([0.42, 0.27, 0.16, 0.11, 0.09, 0.085])\n\nfig, ax = plt.subplots(figsize=(5.5, 3.2))\nax.plot(l0, mse, marker=\"o\", color=\"#11707E\")\nax.set_xscale(\"log\", base=2)\nax.set_xlabel(\"mean $L_0$ (active features per token)\")\nax.set_ylabel(\"reconstruction MSE\")\nax.spines[[\"top\", \"right\"]].set_visible(False)\nplt.tight_layout()\n\n\nFigure 1\n\n\n\nSet eval: true in the chunk options above and Quarto will run this at render time and drop the resulting figure into the page. That is the main reason to use Quarto for a research blog: the figure in the post and the code that made it can’t drift apart."
+    "section": "Why reconstruction isn’t enough",
+    "text": "Why reconstruction isn’t enough\nAn SAE can reconstruct activations well without recovering the variables that are most useful for explaining the model’s computation. The two objectives ask different questions:\n\nReconstruction: can these features reproduce \\(x\\)?\nMechanistic interpretability: which internal variables explain how the model transforms \\(x\\) into later computations?\n\nThey are related, but not identical. A dictionary could contain directions that are excellent for reconstruction and easy to label, yet still give an inconvenient basis for explaining a particular circuit. Conversely, a feature that looks semantically messy might turn out to be causally important.\nSparsity adds a second tension. Relaxing the sparsity constraint generally gives the SAE more flexibility to reduce reconstruction error, but it also moves the representation away from the sparse regime that motivated the decomposition in the first place. The interesting regime is therefore not simply the point with the lowest reconstruction error."
   },
   {
-    "objectID": "writing/2026-08-11-sae-limits/index.html#what-id-want-to-see-next",
-    "href": "writing/2026-08-11-sae-limits/index.html#what-id-want-to-see-next",
+    "objectID": "writing/2026-08-11-sae-limits/index.html#what-i-would-want-to-test",
+    "href": "writing/2026-08-11-sae-limits/index.html#what-i-would-want-to-test",
     "title": "What sparse autoencoders don’t tell you about a circuit",
-    "section": "What I’d want to see next",
-    "text": "What I’d want to see next\nAn SAE paper that reports, for its headline features, the ablation effect size alongside the interpretability score. Right now those two numbers rarely appear in the same table."
+    "section": "What I would want to test",
+    "text": "What I would want to test\nBefore treating an SAE feature as part of a mechanistic explanation, I would want several kinds of evidence.\n\nCausal intervention\nAblating, suppressing, or amplifying the feature should change downstream behavior in the way the interpretation predicts (Marks et al., 2024). This is achievable: on the indirect-object-identification task, SAE features can localize causally responsible behavior more finely than alternative decompositions (Cunningham et al., 2023). The point is not that SAE features aren’t causal, but that interpretability alone doesn’t show that they are.\nEven then, the intervention defines the counterfactual being tested. Zero ablation, mean replacement, resampling, and activation patching do not ask exactly the same causal question, and methodological choices can materially change the resulting localization (Heimersheim & Nanda, 2024; Zhang & Nanda, 2024). An observed effect therefore should not automatically be credited to the semantic label attached to the feature.\n\n\nSpecificity\nIf a feature is interpreted as representing a concept \\(C\\), manipulating it should preferentially affect computations involving \\(C\\), rather than perturbing the model broadly. Otherwise, a large causal effect could reflect disruption rather than understanding.\n\n\nStability\nI would also want to know how stable the feature is under changes to\n\nthe random seed,\nthe dictionary size,\nthe sparsity level,\nthe training data, and\nthe SAE architecture.\n\nPerfect one-to-one recovery is probably too strong a requirement — SAEs trained on the same data with different seeds can learn noticeably different features (Paulo & Belrose, 2026). But if an interpretation depends heavily on one particular decomposition, that is important to know before treating the feature as a natural unit of the model’s computation."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#the-question-im-left-with",
+    "href": "writing/2026-08-11-sae-limits/index.html#the-question-im-left-with",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "The question I’m left with",
+    "text": "The question I’m left with\nWhen I read an SAE interpretation result, the experiment I most want to see is one that reports three things side by side:\n\n\n\n\n\n\n\n\nInterpretability\nReconstruction quality\nCausal effect\n\n\n\n\nCan we name it?\nHow well does it reconstruct \\(x\\)?\nDoes intervening do what the name predicts?\n\n\n\nA feature becoming easier to name is interesting. A feature becoming easier to name and giving a more faithful causal description of the model would be much stronger.\nFor now, I think it is useful to treat these as separate achievements, rather than assuming that one establishes the other. Put compactly:\n\\[\n\\text{interpretable feature}\n\\;\\not\\Rightarrow\\;\n\\text{causal variable}\n\\;\\not\\Rightarrow\\;\n\\text{circuit explanation}.\n\\]"
   },
   {
     "objectID": "writing/2026-08-11-sae-limits/index.html#references",
     "href": "writing/2026-08-11-sae-limits/index.html#references",
     "title": "What sparse autoencoders don’t tell you about a circuit",
     "section": "References",
-    "text": "References\n\n\nCunningham, H., Ewart, A., Riggs, L., Huben, R., & Sharkey, L. (2023). Sparse autoencoders find highly interpretable features in language models. arXiv Preprint arXiv:2309.08600.\n\n\nOlah, C., Cammarata, N., Schubert, L., Goh, G., Petrov, M., & Carter, S. (2020). Zoom in: An introduction to circuits. Distill. https://doi.org/10.23915/distill.00024.001"
+    "text": "References\n\n\nBricken, T., Templeton, A., Batson, J., Chen, B., Jermyn, A., et al. (2023). Towards monosemanticity: Decomposing language models with dictionary learning. Transformer Circuits Thread. https://transformer-circuits.pub/2023/monosemantic-features\n\n\nCunningham, H., Ewart, A., Riggs, L., Huben, R., & Sharkey, L. (2023). Sparse autoencoders find highly interpretable features in language models. arXiv Preprint arXiv:2309.08600.\n\n\nHeimersheim, S., & Nanda, N. (2024). How to use and interpret activation patching. arXiv Preprint arXiv:2404.15255.\n\n\nMarks, S., Rager, C., Michaud, E. J., Belinkov, Y., Bau, D., & Mueller, A. (2024). Sparse feature circuits: Discovering and editing interpretable causal graphs in language models. arXiv Preprint arXiv:2403.19647.\n\n\nPaulo, G., & Belrose, N. (2026). Sparse autoencoders trained on the same data learn different features. International Conference on Learning Representations (ICLR).\n\n\nZhang, F., & Nanda, N. (2024). Towards best practices of activation patching in language models: Metrics and methods. International Conference on Learning Representations (ICLR)."
   },
   {
     "objectID": "writing.html",
     "href": "writing.html",
     "title": "Scientific writing",
     "section": "",
-    "text": "What sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\nNo matching items"
+    "text": "What sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\nresearch notes\n\nsparse autoencoders\n\n\n\nWorking notes on the gap between interpretable SAE features and mechanistic explanations.\n\n\n\n\n\n2026-08-11\n\n5 min\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "insights/2026-08-02-one-gpu-setup/index.html",
@@ -81,7 +88,7 @@
     "href": "index.html#recent",
     "title": "Setareh Najafi",
     "section": "Recent",
-    "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\npaper note\n\nsparse autoencoders\n\n\n\nWorking through three recent SAE papers and where their claims about feature interpretability stop being load-bearing.\n\n\n\n\n\n2026-08-11\n\n2 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
+    "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\nresearch notes\n\nsparse autoencoders\n\n\n\nWorking notes on the gap between interpretable SAE features and mechanistic explanations.\n\n\n\n\n\n2026-08-11\n\n5 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "insights.html",

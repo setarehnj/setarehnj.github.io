@@ -19,143 +19,118 @@
 
 
 
-<p>A sparse autoencoder gives you a dictionary of directions in activation space and a claim that those directions are more interpretable than neurons. That claim is doing a lot of work, and this note is about where it stops holding.</p>
-<section id="the-setup" class="level2">
-<h2 class="anchored" data-anchor-id="the-setup">The setup</h2>
-<p>Given activations <img src="https://latex.codecogs.com/png.latex?x%20%5Cin%20%5Cmathbb%7BR%7D%5Ed">, an SAE learns an encoder and decoder such that</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7Bx%7D%20=%20W_%7B%5Ctext%7Bdec%7D%7D%20f(x)%20+%20b,%20%5Cqquad%20f(x)%20=%20%5Ctext%7BReLU%7D(W_%7B%5Ctext%7Benc%7D%7D(x%20-%20b)),%0A"></p>
-<p>trained to minimise reconstruction error under an <img src="https://latex.codecogs.com/png.latex?%5Cell_1"> penalty on <img src="https://latex.codecogs.com/png.latex?f(x)">:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathcal%7BL%7D%20=%20%5Cunderbrace%7B%5ClVert%20x%20-%20%5Chat%7Bx%7D%20%5CrVert_2%5E2%7D_%7B%5Ctext%7Breconstruction%7D%7D%20+%20%5Clambda%20%5Cunderbrace%7B%5ClVert%20f(x)%20%5CrVert_1%7D_%7B%5Ctext%7Bsparsity%7D%7D.%0A"></p>
-<p>The interpretability claim is that the columns of <img src="https://latex.codecogs.com/png.latex?W_%7B%5Ctext%7Bdec%7D%7D"> correspond to human-legible features <span class="citation" data-cites="cunningham2023sparse">(Cunningham et al., 2023)</span>. The mechanistic claim — which is different, and stronger — is that those features are the units the model itself computes over <span class="citation" data-cites="olah2020zoom">(Olah et al., 2020)</span>.</p>
+<p>Sparse autoencoders (SAEs) are appealing because they decompose dense model activations into a sparse dictionary of learned features that are often easier to describe than individual neurons <span class="citation" data-cites="bricken2023monosemanticity cunningham2023sparse">(<span class="nocase">Bricken et al.</span>, 2023; Cunningham et al., 2023)</span>.</p>
+<p>While reading the SAE literature, there is one distinction I want to keep explicit:</p>
+<blockquote class="blockquote">
+<p>Finding a human-interpretable direction in activation space is not the same as showing that the model uses that direction as a computational variable.</p>
+</blockquote>
+<p>This note is me working through that distinction.</p>
+<section id="basic-setup" class="level2">
+<h2 class="anchored" data-anchor-id="basic-setup">Basic setup</h2>
+<p>For activations <img src="https://latex.codecogs.com/png.latex?x%20%5Cin%20%5Cmathbb%7BR%7D%5Ed">, a sparse autoencoder learns a sparse latent representation <img src="https://latex.codecogs.com/png.latex?f(x)"> and uses it to reconstruct the original activation:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7Bx%7D%20=%20W_%7B%5Cmathrm%7Bdec%7D%7D%20f(x)%20+%20b_%7B%5Cmathrm%7Bdec%7D%7D.%0A"></p>
+<p>A simple version of the encoder is</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Af(x)%20=%20%5Coperatorname%7BReLU%7D%5C!%5Cleft(%20W_%7B%5Cmathrm%7Benc%7D%7D(x%20-%20b_%7B%5Cmathrm%7Bdec%7D%7D)%20+%20b_%7B%5Cmathrm%7Benc%7D%7D%20%5Cright),%0A"></p>
+<p>trained with an objective of the form</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathcal%7BL%7D%20=%20%5ClVert%20x%20-%20%5Chat%7Bx%7D%20%5CrVert_2%5E2%20+%20%5Clambda%20%5ClVert%20f(x)%20%5CrVert_1%20.%0A"></p>
+<p>The reconstruction term asks the dictionary to preserve the information in the original activation. The sparsity term encourages each input to be represented by relatively few dictionary elements.</p>
+<p>SAE variants change both the activation function and the sparsity penalty, so this is best read as the basic picture rather than a definition that covers every SAE.</p>
 </section>
-<section id="where-the-two-claims-come-apart" class="level2">
-<h2 class="anchored" data-anchor-id="where-the-two-claims-come-apart">Where the two claims come apart</h2>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>The short version
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A dictionary element can be legible to you and still not be a variable the model uses. Legibility is a property of the projection; causal relevance has to be tested separately.</p>
-</div>
-</div>
-<p>Three things to check before treating a feature as mechanistic:</p>
+<section id="interpretability-is-not-yet-mechanism" class="level2">
+<h2 class="anchored" data-anchor-id="interpretability-is-not-yet-mechanism">Interpretability is not yet mechanism</h2>
+<p>Suppose an SAE feature fires on tokens that all look semantically related. That is evidence that the learned direction captures some regularity in the model’s representation. It does not yet tell me what role that direction plays in the computation.</p>
+<p>I see at least three separate questions:</p>
 <ol type="1">
-<li><strong>Ablation actually changes behaviour.</strong> If zeroing the feature leaves the downstream logits untouched, you have found a correlate, not a cause.</li>
-<li><strong>The effect survives a better baseline.</strong> Mean ablation and zero ablation disagree, sometimes badly — I wrote about this <a href="../../insights/2026-08-02-one-gpu-setup/">separately</a>.</li>
-<li><strong>The feature is stable across seeds.</strong> Dictionaries trained on the same activations with different seeds should recover overlapping features. Often they don’t.</li>
+<li><p><strong>Can I describe the feature?</strong> Does its activation pattern correspond to something coherent enough that a human can give it a useful description?</p></li>
+<li><p><strong>Does manipulating it causally affect the model?</strong> If I intervene on the feature, do downstream activations or outputs change in the way the proposed interpretation predicts?</p></li>
+<li><p><strong>Is this decomposition privileged in any meaningful sense?</strong> Would another SAE — a different random seed, dictionary size, or sparsity constraint — recover something recognizably equivalent?</p></li>
 </ol>
+<p>The first question is primarily about interpretability. The second bears directly on causal relevance. The third asks something different: whether the learned decomposition is robust enough to treat its features as more than one convenient coordinate system.</p>
+<p>There is also a further jump from a causally relevant feature to a circuit-level explanation. A circuit claim is not just that some feature matters, but that a set of components and their interactions account for a computation. SAE features may provide useful nodes for such an explanation, but learning the features does not by itself identify the causal graph connecting them <span class="citation" data-cites="marks2024sparse">(Marks et al., 2024)</span>.</p>
 </section>
-<section id="a-quick-illustration" class="level2">
-<h2 class="anchored" data-anchor-id="a-quick-illustration">A quick illustration</h2>
-<div id="fig-sparsity" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-sparsity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> np</span>
-<span id="cb1-2"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> plt</span>
-<span id="cb1-3"></span>
-<span id="cb1-4">l0 <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> np.array([<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">8</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">16</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">32</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">64</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">128</span>])</span>
-<span id="cb1-5">mse <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> np.array([<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.42</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.27</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.16</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.11</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.09</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.085</span>])</span>
-<span id="cb1-6"></span>
-<span id="cb1-7">fig, ax <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> plt.subplots(figsize<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span>(<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5.5</span>, <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3.2</span>))</span>
-<span id="cb1-8">ax.plot(l0, mse, marker<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"o"</span>, color<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#11707E"</span>)</span>
-<span id="cb1-9">ax.set_xscale(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"log"</span>, base<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>)</span>
-<span id="cb1-10">ax.set_xlabel(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mean $L_0$ (active features per token)"</span>)</span>
-<span id="cb1-11">ax.set_ylabel(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"reconstruction MSE"</span>)</span>
-<span id="cb1-12">ax.spines[[<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"top"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"right"</span>]].set_visible(<span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">False</span>)</span>
-<span id="cb1-13">plt.tight_layout()</span></code></pre></div></div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-sparsity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
-</figure>
-</div>
-<p>Set <code>eval: true</code> in the chunk options above and Quarto will run this at render time and drop the resulting figure into the page. That is the main reason to use Quarto for a research blog: the figure in the post and the code that made it can’t drift apart.</p>
+<section id="why-reconstruction-isnt-enough" class="level2">
+<h2 class="anchored" data-anchor-id="why-reconstruction-isnt-enough">Why reconstruction isn’t enough</h2>
+<p>An SAE can reconstruct activations well without recovering the variables that are most useful for explaining the model’s computation. The two objectives ask different questions:</p>
+<ul>
+<li><strong>Reconstruction:</strong> can these features reproduce <img src="https://latex.codecogs.com/png.latex?x">?</li>
+<li><strong>Mechanistic interpretability:</strong> which internal variables explain how the model transforms <img src="https://latex.codecogs.com/png.latex?x"> into later computations?</li>
+</ul>
+<p>They are related, but not identical. A dictionary could contain directions that are excellent for reconstruction and easy to label, yet still give an inconvenient basis for explaining a particular circuit. Conversely, a feature that looks semantically messy might turn out to be causally important.</p>
+<p>Sparsity adds a second tension. Relaxing the sparsity constraint generally gives the SAE more flexibility to reduce reconstruction error, but it also moves the representation away from the sparse regime that motivated the decomposition in the first place. The interesting regime is therefore not simply the point with the lowest reconstruction error.</p>
 </section>
-<section id="what-id-want-to-see-next" class="level2">
-<h2 class="anchored" data-anchor-id="what-id-want-to-see-next">What I’d want to see next</h2>
-<p>An SAE paper that reports, for its headline features, the ablation effect size alongside the interpretability score. Right now those two numbers rarely appear in the same table.</p>
+<section id="what-i-would-want-to-test" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-would-want-to-test">What I would want to test</h2>
+<p>Before treating an SAE feature as part of a mechanistic explanation, I would want several kinds of evidence.</p>
+<section id="causal-intervention" class="level3">
+<h3 class="anchored" data-anchor-id="causal-intervention">Causal intervention</h3>
+<p>Ablating, suppressing, or amplifying the feature should change downstream behavior in the way the interpretation predicts <span class="citation" data-cites="marks2024sparse">(Marks et al., 2024)</span>. This is achievable: on the indirect-object-identification task, SAE features can localize causally responsible behavior more finely than alternative decompositions <span class="citation" data-cites="cunningham2023sparse">(Cunningham et al., 2023)</span>. The point is not that SAE features aren’t causal, but that interpretability alone doesn’t show that they are.</p>
+<p>Even then, the intervention defines the counterfactual being tested. Zero ablation, mean replacement, resampling, and activation patching do not ask exactly the same causal question, and methodological choices can materially change the resulting localization <span class="citation" data-cites="heimersheim2024activation zhang2023bestpractices">(Heimersheim &amp; Nanda, 2024; Zhang &amp; Nanda, 2024)</span>. An observed effect therefore should not automatically be credited to the semantic label attached to the feature.</p>
+</section>
+<section id="specificity" class="level3">
+<h3 class="anchored" data-anchor-id="specificity">Specificity</h3>
+<p>If a feature is interpreted as representing a concept <img src="https://latex.codecogs.com/png.latex?C">, manipulating it should preferentially affect computations involving <img src="https://latex.codecogs.com/png.latex?C">, rather than perturbing the model broadly. Otherwise, a large causal effect could reflect disruption rather than understanding.</p>
+</section>
+<section id="stability" class="level3">
+<h3 class="anchored" data-anchor-id="stability">Stability</h3>
+<p>I would also want to know how stable the feature is under changes to</p>
+<ul>
+<li>the random seed,</li>
+<li>the dictionary size,</li>
+<li>the sparsity level,</li>
+<li>the training data, and</li>
+<li>the SAE architecture.</li>
+</ul>
+<p>Perfect one-to-one recovery is probably too strong a requirement — SAEs trained on the same data with different seeds can learn noticeably different features <span class="citation" data-cites="paulo2025sparse">(Paulo &amp; Belrose, 2026)</span>. But if an interpretation depends heavily on one particular decomposition, that is important to know before treating the feature as a natural unit of the model’s computation.</p>
+</section>
+</section>
+<section id="the-question-im-left-with" class="level2">
+<h2 class="anchored" data-anchor-id="the-question-im-left-with">The question I’m left with</h2>
+<p>When I read an SAE interpretation result, the experiment I most want to see is one that reports three things side by side:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Interpretability</th>
+<th style="text-align: center;">Reconstruction quality</th>
+<th style="text-align: center;">Causal effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Can we name it?</td>
+<td style="text-align: center;">How well does it reconstruct <img src="https://latex.codecogs.com/png.latex?x">?</td>
+<td style="text-align: center;">Does intervening do what the name predicts?</td>
+</tr>
+</tbody>
+</table>
+<p>A feature becoming easier to name is interesting. A feature becoming easier to name <strong>and</strong> giving a more faithful causal description of the model would be much stronger.</p>
+<p>For now, I think it is useful to treat these as separate achievements, rather than assuming that one establishes the other. Put compactly:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7Binterpretable%20feature%7D%0A%5C;%5Cnot%5CRightarrow%5C;%0A%5Ctext%7Bcausal%20variable%7D%0A%5C;%5Cnot%5CRightarrow%5C;%0A%5Ctext%7Bcircuit%20explanation%7D.%0A"></p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2">
+<div id="ref-bricken2023monosemanticity" class="csl-entry">
+<span class="nocase">Bricken, T., Templeton, A., Batson, J., Chen, B., Jermyn, A., et al.</span> (2023). Towards monosemanticity: Decomposing language models with dictionary learning. <em>Transformer Circuits Thread</em>. <a href="https://transformer-circuits.pub/2023/monosemantic-features">https://transformer-circuits.pub/2023/monosemantic-features</a>
+</div>
 <div id="ref-cunningham2023sparse" class="csl-entry">
 Cunningham, H., Ewart, A., Riggs, L., Huben, R., &amp; Sharkey, L. (2023). Sparse autoencoders find highly interpretable features in language models. <em>arXiv Preprint arXiv:2309.08600</em>.
 </div>
-<div id="ref-olah2020zoom" class="csl-entry">
-Olah, C., Cammarata, N., Schubert, L., Goh, G., Petrov, M., &amp; Carter, S. (2020). Zoom in: An introduction to circuits. <em>Distill</em>. <a href="https://doi.org/10.23915/distill.00024.001">https://doi.org/10.23915/distill.00024.001</a>
+<div id="ref-heimersheim2024activation" class="csl-entry">
+Heimersheim, S., &amp; Nanda, N. (2024). How to use and interpret activation patching. <em>arXiv Preprint arXiv:2404.15255</em>.
+</div>
+<div id="ref-marks2024sparse" class="csl-entry">
+Marks, S., Rager, C., Michaud, E. J., Belinkov, Y., Bau, D., &amp; Mueller, A. (2024). Sparse feature circuits: Discovering and editing interpretable causal graphs in language models. <em>arXiv Preprint arXiv:2403.19647</em>.
+</div>
+<div id="ref-paulo2025sparse" class="csl-entry">
+Paulo, G., &amp; Belrose, N. (2026). Sparse autoencoders trained on the same data learn different features. <em>International Conference on Learning Representations (ICLR)</em>.
+</div>
+<div id="ref-zhang2023bestpractices" class="csl-entry">
+Zhang, F., &amp; Nanda, N. (2024). Towards best practices of activation patching in language models: Metrics and methods. <em>International Conference on Learning Representations (ICLR)</em>.
 </div>
 </div>
 
@@ -164,11 +139,10 @@ Olah, C., Cammarata, N., Schubert, L., Goh, G., Petrov, M., &amp; Carter, S. (20
 
  ]]></description>
   <category>interpretability</category>
-  <category>paper note</category>
+  <category>research notes</category>
   <category>sparse autoencoders</category>
   <guid>https://setarehnj.github.io/writing/2026-08-11-sae-limits/</guid>
   <pubDate>Mon, 10 Aug 2026 20:30:00 GMT</pubDate>
-  <media:content url="https://setarehnj.github.io/writing/2026-08-11-sae-limits/figure-1.png" medium="image" type="image/png"/>
 </item>
 </channel>
 </rss>
