@@ -1,0 +1,170 @@
+[
+  {
+    "objectID": "insights.html",
+    "href": "insights.html",
+    "title": "Tech insights",
+    "section": "",
+    "text": "A one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n2026-08-02\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "writing.html",
+    "href": "writing.html",
+    "title": "Scientific writing",
+    "section": "",
+    "text": "What sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\nresearch notes\n\nsparse autoencoders\n\n\n\nWorking notes on the gap between interpretable SAE features and mechanistic explanations.\n\n\n\n\n\n2026-08-11\n\n5 min\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "math-for-ml.html",
+    "href": "math-for-ml.html",
+    "title": "Math for ML",
+    "section": "",
+    "text": "A collection of proof-based mathematical notes for understanding modern machine learning. The goal is to study the underlying mathematics carefully, with explicit assumptions, complete proofs, illuminating counterexamples, and connections to learning theory where appropriate."
+  },
+  {
+    "objectID": "math-for-ml.html#analysis-and-probability",
+    "href": "math-for-ml.html#analysis-and-probability",
+    "title": "Math for ML",
+    "section": "Analysis and probability",
+    "text": "Analysis and probability\n\nFunctional analysis\nNormed spaces, Banach and Hilbert spaces, bounded linear operators, duality, weak convergence, compact operators, and spectral theory.\n\n\nMeasure theory and probability\nMeasures, measurable functions, Lebesgue integration, convergence theorems, product measures, conditional expectation, and stochastic processes."
+  },
+  {
+    "objectID": "math-for-ml.html#optimization-and-geometry",
+    "href": "math-for-ml.html#optimization-and-geometry",
+    "title": "Math for ML",
+    "section": "Optimization and geometry",
+    "text": "Optimization and geometry\n\nConvex analysis and optimization\nConvex sets and functions, separation, duality, optimality conditions, and first-order optimization methods.\n\n\nDifferential geometry and information geometry\nManifolds, tangent spaces, differential forms where useful, geometric approaches to optimization, and statistical models."
+  },
+  {
+    "objectID": "math-for-ml.html#learning-theory",
+    "href": "math-for-ml.html#learning-theory",
+    "title": "Math for ML",
+    "section": "Learning theory",
+    "text": "Learning theory\n\nStatistical learning theory\nConcentration inequalities, generalization bounds, empirical processes, and distribution shift.\n\n\nDynamical systems\nGradient flows, stability, optimization trajectories, and learning dynamics."
+  },
+  {
+    "objectID": "math-for-ml.html#notes",
+    "href": "math-for-ml.html#notes",
+    "title": "Math for ML",
+    "section": "Notes",
+    "text": "Notes\nProof-based essays and exercises will be added as they are developed and checked."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html",
+    "href": "writing/2026-08-11-sae-limits/index.html",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "",
+    "text": "Sparse autoencoders (SAEs) are appealing because they decompose dense model activations into a sparse dictionary of learned features that are often easier to describe than individual neurons (Cunningham et al., 2023; bricken2023monosemanticity?).\nWhile reading the SAE literature, there is one distinction I want to keep explicit:\nThis note is me working through that distinction."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#basic-setup",
+    "href": "writing/2026-08-11-sae-limits/index.html#basic-setup",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "Basic setup",
+    "text": "Basic setup\nFor activations \\(x \\in \\mathbb{R}^d\\), a sparse autoencoder learns a sparse latent representation \\(f(x)\\) and uses it to reconstruct the original activation:\n\\[\n\\hat{x} = W_{\\mathrm{dec}} f(x) + b_{\\mathrm{dec}}.\n\\]\nA simple version of the encoder is\n\\[\nf(x) = \\operatorname{ReLU}\\!\\left( W_{\\mathrm{enc}}(x - b_{\\mathrm{dec}}) + b_{\\mathrm{enc}} \\right),\n\\]\ntrained with an objective of the form\n\\[\n\\mathcal{L} = \\lVert x - \\hat{x} \\rVert_2^2 + \\lambda \\lVert f(x) \\rVert_1 .\n\\]\nThe reconstruction term asks the dictionary to preserve the information in the original activation. The sparsity term encourages each input to be represented by relatively few dictionary elements.\nSAE variants change both the activation function and the sparsity penalty, so this is best read as the basic picture rather than a definition that covers every SAE."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#interpretability-is-not-yet-mechanism",
+    "href": "writing/2026-08-11-sae-limits/index.html#interpretability-is-not-yet-mechanism",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "Interpretability is not yet mechanism",
+    "text": "Interpretability is not yet mechanism\nSuppose an SAE feature fires on tokens that all look semantically related. That is evidence that the learned direction captures some regularity in the model’s representation. It does not yet tell me what role that direction plays in the computation.\nI see at least three separate questions:\n\nCan I describe the feature? Does its activation pattern correspond to something coherent enough that a human can give it a useful description?\nDoes manipulating it causally affect the model? If I intervene on the feature, do downstream activations or outputs change in the way the proposed interpretation predicts?\nIs this decomposition privileged in any meaningful sense? Would another SAE — a different random seed, dictionary size, or sparsity constraint — recover something recognizably equivalent?\n\nThe first question is primarily about interpretability. The second bears directly on causal relevance. The third asks something different: whether the learned decomposition is robust enough to treat its features as more than one convenient coordinate system.\nThere is also a further jump from a causally relevant feature to a circuit-level explanation. A circuit claim is not just that some feature matters, but that a set of components and their interactions account for a computation. SAE features may provide useful nodes for such an explanation, but learning the features does not by itself identify the causal graph connecting them (marks2024sparse?)."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#why-reconstruction-isnt-enough",
+    "href": "writing/2026-08-11-sae-limits/index.html#why-reconstruction-isnt-enough",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "Why reconstruction isn’t enough",
+    "text": "Why reconstruction isn’t enough\nAn SAE can reconstruct activations well without recovering the variables that are most useful for explaining the model’s computation. The two objectives ask different questions:\n\nReconstruction: can these features reproduce \\(x\\)?\nMechanistic interpretability: which internal variables explain how the model transforms \\(x\\) into later computations?\n\nThey are related, but not identical. A dictionary could contain directions that are excellent for reconstruction and easy to label, yet still give an inconvenient basis for explaining a particular circuit. Conversely, a feature that looks semantically messy might turn out to be causally important.\nSparsity adds a second tension. Relaxing the sparsity constraint generally gives the SAE more flexibility to reduce reconstruction error, but it also moves the representation away from the sparse regime that motivated the decomposition in the first place. The interesting regime is therefore not simply the point with the lowest reconstruction error."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#what-i-would-want-to-test",
+    "href": "writing/2026-08-11-sae-limits/index.html#what-i-would-want-to-test",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "What I would want to test",
+    "text": "What I would want to test\nBefore treating an SAE feature as part of a mechanistic explanation, I would want several kinds of evidence.\n\nCausal intervention\nAblating, suppressing, or amplifying the feature should change downstream behavior in the way the interpretation predicts (marks2024sparse?). This is achievable: on the indirect-object-identification task, SAE features can localize causally responsible behavior more finely than alternative decompositions (Cunningham et al., 2023). The point is not that SAE features aren’t causal, but that interpretability alone doesn’t show that they are.\nEven then, the intervention defines the counterfactual being tested. Zero ablation, mean replacement, resampling, and activation patching do not ask exactly the same causal question, and methodological choices can materially change the resulting localization (heimersheim2024activation?; zhang2023bestpractices?). An observed effect therefore should not automatically be credited to the semantic label attached to the feature.\n\n\nSpecificity\nIf a feature is interpreted as representing a concept \\(C\\), manipulating it should preferentially affect computations involving \\(C\\), rather than perturbing the model broadly. Otherwise, a large causal effect could reflect disruption rather than understanding.\n\n\nStability\nI would also want to know how stable the feature is under changes to\n\nthe random seed,\nthe dictionary size,\nthe sparsity level,\nthe training data, and\nthe SAE architecture.\n\nPerfect one-to-one recovery is probably too strong a requirement — SAEs trained on the same data with different seeds can learn noticeably different features (paulo2025sparse?). But if an interpretation depends heavily on one particular decomposition, that is important to know before treating the feature as a natural unit of the model’s computation."
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#the-question-im-left-with",
+    "href": "writing/2026-08-11-sae-limits/index.html#the-question-im-left-with",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "The question I’m left with",
+    "text": "The question I’m left with\nWhen I read an SAE interpretation result, the experiment I most want to see is one that reports three things side by side:\n\n\n\n\n\n\n\n\nInterpretability\nReconstruction quality\nCausal effect\n\n\n\n\nCan we name it?\nHow well does it reconstruct \\(x\\)?\nDoes intervening do what the name predicts?\n\n\n\nA feature becoming easier to name is interesting. A feature becoming easier to name and giving a more faithful causal description of the model would be much stronger.\nFor now, I think it is useful to treat these as separate achievements, rather than assuming that one establishes the other. Put compactly:\n\\[\n\\text{interpretable feature}\n\\;\\not\\Rightarrow\\;\n\\text{causal variable}\n\\;\\not\\Rightarrow\\;\n\\text{circuit explanation}.\n\\]"
+  },
+  {
+    "objectID": "writing/2026-08-11-sae-limits/index.html#references",
+    "href": "writing/2026-08-11-sae-limits/index.html#references",
+    "title": "What sparse autoencoders don’t tell you about a circuit",
+    "section": "References",
+    "text": "References\n\n\nCunningham, H., Ewart, A., Riggs, L., Huben, R., & Sharkey, L. (2023). Sparse autoencoders find highly interpretable features in language models. arXiv Preprint arXiv:2309.08600."
+  },
+  {
+    "objectID": "insights/2026-08-02-one-gpu-setup/index.html",
+    "href": "insights/2026-08-02-one-gpu-setup/index.html",
+    "title": "A one-GPU setup for interpretability experiments",
+    "section": "",
+    "text": "Most of what I run fits on a single GPU if the activations never all exist at once. The pattern below is what I keep coming back to."
+  },
+  {
+    "objectID": "insights/2026-08-02-one-gpu-setup/index.html#hook-once-write-straight-to-disk",
+    "href": "insights/2026-08-02-one-gpu-setup/index.html#hook-once-write-straight-to-disk",
+    "title": "A one-GPU setup for interpretability experiments",
+    "section": "Hook once, write straight to disk",
+    "text": "Hook once, write straight to disk\n\nfrom contextlib import contextmanager\nimport torch\n\n@contextmanager\ndef capture(module, store, key):\n    \"\"\"Append this module's output to `store[key]`, on CPU, then detach.\"\"\"\n    def hook(_m, _inp, out):\n        store.setdefault(key, []).append(out.detach().to(\"cpu\", torch.float16))\n    handle = module.register_forward_hook(hook)\n    try:\n        yield store\n    finally:\n        handle.remove()\n\nTwo details do most of the work: float16 on the way out halves the disk cost with no visible effect on anything I’ve measured, and .to(\"cpu\") inside the hook keeps the GPU from accumulating a batch’s worth of residual stream."
+  },
+  {
+    "objectID": "insights/2026-08-02-one-gpu-setup/index.html#three-habits-worth-the-friction",
+    "href": "insights/2026-08-02-one-gpu-setup/index.html#three-habits-worth-the-friction",
+    "title": "A one-GPU setup for interpretability experiments",
+    "section": "Three habits worth the friction",
+    "text": "Three habits worth the friction\n\nOne run, one directory, one config file. If you can’t reconstruct which checkpoint produced a figure, the figure isn’t evidence.\nSave the tokenizer output, not just the text. Re-tokenizing later with a slightly different version is a silent source of mismatch.\nWrite the negative results down the same day. They are the ones you will otherwise re-run in four months."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Setareh Najafi",
+    "section": "",
+    "text": "AI safety · Interpretability · Reasoning\n\n\n\n\nI’m a Computer Science PhD student at UC Santa Barbara, with current research interests in AI safety, mechanistic interpretability, and language-model reasoning. My broader work has included machine unlearning for LLMs, formal methods, physics-informed neural networks, and reinforcement learning.\nI earned my M.S. in Computer Science from UCSB and my B.Sc. in Computer Science from the University of Tehran.\nSeeking research opportunities in AI safety and interpretability for early 2027.\n\nGitHub · LinkedIn · Email"
+  },
+  {
+    "objectID": "index.html#recent",
+    "href": "index.html#recent",
+    "title": "Setareh Najafi",
+    "section": "Recent",
+    "text": "Recent\n\n\n\n\n\nWhat sparse autoencoders don’t tell you about a circuit\n\n\n\ninterpretability\n\nresearch notes\n\nsparse autoencoders\n\n\n\nWorking notes on the gap between interpretable SAE features and mechanistic explanations.\n\n\n\n\n\n2026-08-11\n\n5 min\n\n\n\n\n\n\nA one-GPU setup for interpretability experiments\n\n\n\ntooling\n\nworkflow\n\n\n\nCaching activations without filling the disk, and the hook pattern I reuse everywhere.\n\n\n\n\n\n2026-08-02\n\n2 min\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "mathematics-of-alignment.html",
+    "href": "mathematics-of-alignment.html",
+    "title": "Mathematics of Alignment",
+    "section": "",
+    "text": "This is a research-oriented collection of mathematical explorations motivated by concrete problems in AI alignment. Rather than equating advanced mathematics with alignment, each note will state its alignment question, the mathematical assumptions, and what the results do—and do not—establish.\nFor background courses in analysis, probability, optimization, and geometry, see Math for ML."
+  },
+  {
+    "objectID": "mathematics-of-alignment.html#agency-and-decision-making",
+    "href": "mathematics-of-alignment.html#agency-and-decision-making",
+    "title": "Mathematics of Alignment",
+    "section": "Agency and decision-making",
+    "text": "Agency and decision-making\n\nDecision theory and agent foundations\nPreference representation, expected utility, sequential decisions, and formal models of rational agency.\n\n\nGame theory and multi-agent systems\nStrategic interaction, mechanism design, and models of cooperation and conflict."
+  },
+  {
+    "objectID": "mathematics-of-alignment.html#learning-and-oversight",
+    "href": "mathematics-of-alignment.html#learning-and-oversight",
+    "title": "Mathematics of Alignment",
+    "section": "Learning and oversight",
+    "text": "Learning and oversight\n\nPreference learning and reward misspecification\nInference from imperfect feedback, inverse problems, uncertainty over preferences, and objective misspecification.\n\n\nCalibration, robustness, and evaluations\nStatistical guarantees, online learning, distribution shift, and the limits of oversight."
+  },
+  {
+    "objectID": "mathematics-of-alignment.html#representations-and-training-dynamics",
+    "href": "mathematics-of-alignment.html#representations-and-training-dynamics",
+    "title": "Mathematics of Alignment",
+    "section": "Representations and training dynamics",
+    "text": "Representations and training dynamics\n\nInformation theory and interpretability\nRepresentational structure, information flow, and the mathematical limits of what observations reveal about learned computations.\n\n\nSingular learning theory\nSingular statistical models, Bayesian asymptotics, and carefully stated hypotheses about neural-network learning dynamics."
+  },
+  {
+    "objectID": "mathematics-of-alignment.html#research-notes",
+    "href": "mathematics-of-alignment.html#research-notes",
+    "title": "Mathematics of Alignment",
+    "section": "Research notes",
+    "text": "Research notes\nEach note will begin with a precise question and distinguish established theorems from conjectures and speculative applications."
+  }
+]
